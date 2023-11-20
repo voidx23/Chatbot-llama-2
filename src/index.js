@@ -2,7 +2,6 @@ import express from 'express';
 import http from 'http';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import path from 'path';
 import { v4 } from 'uuid';
 import { Mutex } from 'async-mutex';
 import { dirname, join } from 'path';
@@ -37,7 +36,6 @@ const messageIdMutex = new Mutex();
 app.use(cors({ origin: 'http://localhost:7700' }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
-app.use('/assets', express.static(path.join(__dirname, 'public/assets')));
 
 // Routes
 app.get('/', (req, res) => {

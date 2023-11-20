@@ -1,6 +1,6 @@
 import { Server } from 'socket.io'
 
-const configureSocketIO = (httpServer) =>{
+const configureSocketIO = (httpServer) => {
     const io = new Server(httpServer);
 
     io.on('connection', (socket) => {
@@ -15,8 +15,8 @@ const configureSocketIO = (httpServer) =>{
             io.emit('chat message', msg);
         });
 
-       
-      
+
+
     });
     return io
 }
