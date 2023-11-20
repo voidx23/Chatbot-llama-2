@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoodSpace Chatbot</title>
+    <style>
+        body {
+            margin: 0;
+            padding-bottom: 3rem;
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        #chat-container {
+            max-width: 600px;
+            margin: 20px auto;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        #form {
+            background: #4CAF50;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        #input {
+            border: none;
+            padding: 0.75rem;
+            flex-grow: 1;
+            border-radius: 8px;
+            margin: 0.5rem;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        #form > button {
+            background: #d8f05b;
+            border: none;
+            padding: 0.75rem;
+            margin: 0.5rem;
+            border-radius: 8px;
+            outline: none;
+            color: #878686;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            transition: color 0.3s ease;
+        }
+
+        #form > button:hover {
+            background: #a0b729;
+            color: #ffffff;
+        }
+
+        #messages {
+            list-style-type: none;
+            margin: 0;
+            padding: 1rem;
+            overflow-y: auto;
+            height: 300px;
+        }
+
+        .message {
+            padding: 1rem;
+            margin-bottom: 10px; /* Adjust the margin-bottom for the desired gap between messages */
+            border-radius: 10px;
+            transition: background 0.3s ease;
+        }
+
+        .message-sent {
+            background-color: #4CAF50;
+            color: #fff;
+            align-self: flex-end;
+        }
+
+        .message-received {
+            background-color: #008CBA;
+            color: #fff;
+            align-self: flex-start;
+        }
+
+        .message-sent:hover, .message-received:hover {
+            background-color: #333; /* Darken on hover */
+        }
+
+        #loading {
+            text-align: center;
+            padding: 1rem;
+            display: none;
+        }
+
+        #loading svg {
+            width: 80px; /* Adjust the size of the loading indicator */
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <h1 style="text-align: center;">GoodSpace Chatbot</h1>
+        <div id="chat-container">
+            <ul id="messages"></ul>
+            <div id="loading">
+              <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="margin: auto; background: rgba(241, 242, 243, 0); display: block; shape-rendering: auto;" width="200px" height="200px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
+                <g transform="rotate(0 50 50)">
+                  <rect x="47" y="24" rx="3" ry="6" width="6" height="12" fill="#0055a5">
+                    <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.9166666666666666s" repeatCount="indefinite"></animate>
+                  </rect>
+                </g><g transform="rotate(30 50 50)">
+                  <rect x="47" y="24" rx="3" ry="6" width="6" height="12" fill="#45aee7">
+                    <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.8333333333333334s" repeatCount="indefinite"></animate>
+                  </rect>
+                </g><g transform="rotate(60 50 50)">
+                  <rect x="47" y="24" rx="3" ry="6" width="6" height="12" fill="#d8f05b">
+                    <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.75s" repeatCount="indefinite"></animate>
+                  </rect>
+                </g><g transform="rotate(90 50 50)">
+                  <rect x="47" y="24" rx="3" ry="6" width="6" height="12" fill="#55ad15">
+                    <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.6666666666666666s" repeatCount="indefinite"></animate>
+                  </rect>
+                </g><g transform="rotate(120 50 50)">
+                  <rect x="47" y="24" rx="3" ry="6" width="6" height="12" fill="#0055a5">
+                    <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.5833333333333334s" repeatCount="indefinite"></animate>
+                  </rect>
+                </g><g transform="rotate(150 50 50)">
+                  <rect x="47" y="24" rx="3" ry="6" width="6" height="12" fill="#45aee7">
+                    <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.5s" repeatCount="indefinite"></animate>
+                  </rect>
+                </g><g transform="rotate(180 50 50)">
+                  <rect x="47" y="24" rx="3" ry="6" width="6" height="12" fill="#d8f05b">
+                    <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.4166666666666667s" repeatCount="indefinite"></animate>
+                  </rect>
+                </g><g transform="rotate(210 50 50)">
+                  <rect x="47" y="24" rx="3" ry="6" width="6" height="12" fill="#55ad15">
+                    <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.3333333333333333s" repeatCount="indefinite"></animate>
+                  </rect>
+                </g><g transform="rotate(240 50 50)">
+                  <rect x="47" y="24" rx="3" ry="6" width="6" height="12" fill="#0055a5">
+                    <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.25s" repeatCount="indefinite"></animate>
+                  </rect>
+                </g><g transform="rotate(270 50 50)">
+                  <rect x="47" y="24" rx="3" ry="6" width="6" height="12" fill="#45aee7">
+                    <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.16666666666666666s" repeatCount="indefinite"></animate>
+                  </rect>
+                </g><g transform="rotate(300 50 50)">
+                  <rect x="47" y="24" rx="3" ry="6" width="6" height="12" fill="#d8f05b">
+                    <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.08333333333333333s" repeatCount="indefinite"></animate>
+                  </rect>
+                </g><g transform="rotate(330 50 50)">
+                  <rect x="47" y="24" rx="3" ry="6" width="6" height="12" fill="#55ad15">
+                    <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="0s" repeatCount="indefinite"></animate>
+                  </rect>
+                </g>
+                <!-- [ldio] generated by https://loading.io/ --></svg>
+            </div>
+            <form id="form" action="">
+                <input id="input" autocomplete="off" placeholder="Type your message..." />
+                <button type="submit">Send</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        const form = document.getElementById('form');
+        const input = document.getElementById('input');
+        const messages = document.getElementById('messages');
+        const loadingIndicator = document.getElementById('loading');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (input.value) {
+                // Show loading indicator while waiting for the response
+                loadingIndicator.style.display = 'block';
+
+                // Send user message to the server
+                socket.emit('chat message', input.value);
+
+                // Create and append the sent message to the UI
+                const sentMessage = document.createElement('li');
+                sentMessage.textContent = input.value;
+                sentMessage.classList.add('message', 'message-sent');
+                messages.appendChild(sentMessage);
+
+                const value = input.value;
+
+                input.value = '';
+
+                try {
+                    // Make a request to the OpenAI API endpoint
+                    const response = await axios.post('/api/chat', {
+                        message: value,
+                    });
+
+                    if (response.status !== 200) {
+                        throw new Error('Failed to get AI response');
+                    }
+
+                    const result = response.data.response;
+
+                    // Hide loading indicator before displaying the AI response
+                    loadingIndicator.style.display = 'none';
+
+                    // Display AI response on the UI
+                    const formattedResult = result.join(' ');
+
+                    const receivedMessage = document.createElement('li');
+                    receivedMessage.innerHTML = `<strong>Chatbot:</strong> ${formattedResult}`;
+                    receivedMessage.classList.add('message', 'message-received');
+                    messages.appendChild(receivedMessage);
+
+                    // Scroll to the bottom of the chat
+                    window.scrollTo(0, document.body.scrollHeight);
+                } catch (error) {
+                    console.error('Error fetching AI response:', error.message);
+                    // Handle the error as needed
+                    // Hide loading indicator in case of an error
+                    loadingIndicator.style.display = 'none';
+                }
+
+                input.value = '';
+            }
+        });
+    </script>
+</body>
+</html>
